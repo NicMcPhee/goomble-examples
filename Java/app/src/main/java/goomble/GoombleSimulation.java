@@ -29,9 +29,9 @@ public class GoombleSimulation {
         if (args.length > 0 && args[0].equals("--lock")) {
             useLocks = true;
         }
-        final int numGamblers = 12;
-        final int numPresses = numGamblers * MAX_BALANCE;
-        GoombleSimulation simulation = new GoombleSimulation(numGamblers);
+        final int numGoomblers = 12;
+        final int numPresses = numGoomblers * MAX_BALANCE;
+        GoombleSimulation simulation = new GoombleSimulation(numGoomblers);
         simulation.runSimulation(numPresses);
         simulation.printResults();
     }
