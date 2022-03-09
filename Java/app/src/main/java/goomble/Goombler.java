@@ -9,8 +9,10 @@ public class Goombler {
     private int regionNumber;
     private int balance;
     private Random rand = new Random();
+    private GoombleAccount goombleAccount;
 
-    public Goombler(int regionNumber, int initialBalance) {
+    public Goombler(GoombleAccount goombleAccount, int regionNumber, int initialBalance) {
+        this.goombleAccount = goombleAccount;
         this.regionNumber = regionNumber;
         this.balance = initialBalance;
     }
@@ -31,6 +33,7 @@ public class Goombler {
                 e.printStackTrace();
             }
             --balance;
+            goombleAccount.increment();
         }
     }
 
