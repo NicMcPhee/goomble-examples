@@ -1,19 +1,17 @@
 package goomble;
 
 import java.util.Random;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class Goombler {
 
-    // DON'T WANT THE REGION NUMBER; WANT A REGION COUNTER OBJECT!
-    private int regionNumber;
     private int balance;
     private Random rand = new Random();
     private GoombleAccount goombleAccount;
+    private ReentrantLock lock = new ReentrantLock();
 
-    public Goombler(GoombleAccount goombleAccount, int regionNumber, int initialBalance) {
+    public Goombler(GoombleAccount goombleAccount, int initialBalance) {
         this.goombleAccount = goombleAccount;
-        this.regionNumber = regionNumber;
         this.balance = initialBalance;
     }
 
@@ -22,6 +20,9 @@ public class Goombler {
     }
 
     public void lucky() {
+        if (GoombleSimulation.useLocks) {
+            lock.lock();
+        }
         if (balance > 0) {
             // Sleeping for a small, random amount of time here makes it more likely that
             // two or more threads will interleave here in interesting ways, thus creating
@@ -29,11 +30,13 @@ public class Goombler {
             try {
                 Thread.sleep(rand.nextInt(60));
             } catch (InterruptedException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
             --balance;
             goombleAccount.increment();
+        }
+        if (GoombleSimulation.useLocks) {
+            lock.unlock();
         }
     }
 
