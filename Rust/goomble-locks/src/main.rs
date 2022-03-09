@@ -27,19 +27,19 @@ fn init_goomblers(num_goomblers: u32) -> (Vec<Goombler>, u32) {
     return (goomblers, initial_goomblers_total_balance);
 }
 
-fn lucky(goombler: &Goombler, goombleBalance: Arc<Mutex<u64>>) {
+fn lucky(goombler: &Goombler, goomble_balance: Arc<Mutex<u64>>) {
     let mut balance = goombler.balance.lock().unwrap();
     if *balance > 0 {
         *balance -= 1;
         // Frees up the lock on balance since we don't need that anymore.
         drop(balance);
-        let mut goombleBalance = goombleBalance.lock().unwrap();
-        *goombleBalance += 1;
+        let mut goomble_balance = goomble_balance.lock().unwrap();
+        *goomble_balance += 1;
     }
 }
 
 fn main() {
-    let goombleBalance = Arc::new(Mutex::new(0));
+    let goomble_balance = Arc::new(Mutex::new(0));
     let (goomblers, initial_goomblers_total_balance) = init_goomblers(NUM_GOOMBLERS);
 
     let arc_goomblers = Arc::new(goomblers);
@@ -47,24 +47,23 @@ fn main() {
     let thread_pool = ThreadPool::new(NUM_THREADS);
     for _ in 0..NUM_PRESSES {
         let goomblers = Arc::clone(&arc_goomblers);
-        let goombleBalance = Arc::clone(&goombleBalance);
+        let goomble_balance = Arc::clone(&goomble_balance);
         thread_pool.execute(move|| {
             let goombler = goomblers.choose(&mut rand::thread_rng()).unwrap();
-            lucky(goombler, goombleBalance);
+            lucky(goombler, goomble_balance);
         });
     }
     thread_pool.join();
 
     println!("Initial goomblers total balance is {}.", initial_goomblers_total_balance);
-    let mut totalBalance = 0;
     let mut index = 0;
-    let mut totalBalance = 0;
+    let mut initial_goomblers_total_balance = 0;
     for goombler in arc_goomblers.iter() {
         let balance = goombler.balance.lock().unwrap();
         println!("Goombler #{} has a final balance of ${}.", index, *balance);
         index += 1;
-        totalBalance += *balance;
+        initial_goomblers_total_balance += *balance;
     }
-    println!("The total Goomblers balance is ${}.", totalBalance);
-    println!("The Goomble balance is ${}.", goombleBalance.lock().unwrap());
+    println!("The total Goomblers balance is ${}.", initial_goomblers_total_balance);
+    println!("The Goomble balance is ${}.", goomble_balance.lock().unwrap());
 }
