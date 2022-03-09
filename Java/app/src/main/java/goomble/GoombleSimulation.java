@@ -10,25 +10,28 @@ import java.util.concurrent.TimeUnit;
 
 public class GoombleSimulation {
 
+    public static boolean useLocks = false;
     private Random rand = new Random();
     private static final int MAX_BALANCE = 100;
     private Goombler[] goomblers;
     private GoombleAccount goombleAccount = new GoombleAccount();
     private int initialGoomblersTotalBalance = 0;
 
-    public GoombleSimulation(int numGamblers, int numRegions) {
+    public GoombleSimulation(int numGamblers) {
         goomblers = new Goombler[numGamblers];
         for (int i=0; i<numGamblers; ++i) {
-            goomblers[i] = new Goombler(goombleAccount, rand.nextInt(numRegions), rand.nextInt(MAX_BALANCE));
+            goomblers[i] = new Goombler(goombleAccount, rand.nextInt(MAX_BALANCE));
             initialGoomblersTotalBalance += goomblers[i].getBalance();
         }
     }
 
     public static void main(String[] args) throws InterruptedException {
+        if (args.length > 0 && args[0].equals("--lock")) {
+            useLocks = true;
+        }
         final int numGamblers = 12;
-        final int numRegions = 4;
         final int numPresses = numGamblers * MAX_BALANCE;
-        GoombleSimulation simulation = new GoombleSimulation(numGamblers, numRegions);
+        GoombleSimulation simulation = new GoombleSimulation(numGamblers);
         simulation.runSimulation(numPresses);
         simulation.printResults();
     }
@@ -54,6 +57,7 @@ public class GoombleSimulation {
             totalBalance += balance;
         }
         System.out.println("The total Goomblers balance is $" + totalBalance);
-        System.out.println("The Goomble Balance is $" + goombleAccount.getBalance());
+        System.out.println("The Goomble balance is $" + goombleAccount.getBalance());
+        System.out.println("The atomic Goomble balance is $" + goombleAccount.getAtomicBalance());
     }
 }
