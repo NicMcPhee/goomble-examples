@@ -13,11 +13,14 @@ public class GoombleSimulation {
     private Random rand = new Random();
     private static final int MAX_BALANCE = 100;
     private Goombler[] goomblers;
+    private GoombleAccount goombleAccount = new GoombleAccount();
+    private int initialGoomblersTotalBalance = 0;
 
     public GoombleSimulation(int numGamblers, int numRegions) {
         goomblers = new Goombler[numGamblers];
         for (int i=0; i<numGamblers; ++i) {
-            goomblers[i] = new Goombler(rand.nextInt(numRegions), rand.nextInt(MAX_BALANCE));
+            goomblers[i] = new Goombler(goombleAccount, rand.nextInt(numRegions), rand.nextInt(MAX_BALANCE));
+            initialGoomblersTotalBalance += goomblers[i].getBalance();
         }
     }
 
@@ -43,12 +46,14 @@ public class GoombleSimulation {
     }
 
     private void printResults() {
+        System.out.println("Initial total Goomblers balance was $" + initialGoomblersTotalBalance);
         int totalBalance = 0;
         for (int i=0; i<goomblers.length; ++i) {
             int balance = goomblers[i].getBalance();
             System.out.println("Goombler #" + i + " has a final balance of $" + balance);
             totalBalance += balance;
         }
-        System.out.println("The total balance is $" + totalBalance);
+        System.out.println("The total Goomblers balance is $" + totalBalance);
+        System.out.println("The Goomble Balance is $" + goombleAccount.getBalance());
     }
 }
