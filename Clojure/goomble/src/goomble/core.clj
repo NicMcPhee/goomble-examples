@@ -30,7 +30,7 @@
   [goomblers]
   (reduce (fn [sum gmb] (+ sum (:balance @gmb))) 0 goomblers))
 
-(defn -main
+(defn do-simulation
   []
   (let [goomblers (init-goomblers num-goomblers)
         initial-goomblers-total-balance
@@ -44,3 +44,7 @@
     (println (str "The total Goomblers balance is "
                   (goomblers-total-balance goomblers)))
     (println (str "The Goomble balance is " @goomble-balance))))
+
+(defn -main
+  []
+  (time (do-simulation)))

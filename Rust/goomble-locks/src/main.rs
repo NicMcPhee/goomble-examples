@@ -1,4 +1,5 @@
 use std::sync::{Arc, Mutex};
+use std::time::{Duration, Instant};
 use rand::Rng;
 use rand::seq::SliceRandom;
 use threadpool::ThreadPool;
@@ -39,6 +40,7 @@ fn lucky(goombler: &Goombler, goomble_balance: Arc<Mutex<u64>>) {
 }
 
 fn main() {
+    let start = Instant::now();
     let goomble_balance = Arc::new(Mutex::new(0));
     let (goomblers, initial_goomblers_total_balance) = init_goomblers(NUM_GOOMBLERS);
 
@@ -54,6 +56,7 @@ fn main() {
         });
     }
     thread_pool.join();
+    let duration = start.elapsed();
 
     println!("Initial goomblers total balance is {}.", initial_goomblers_total_balance);
     let mut index = 0;
@@ -66,4 +69,5 @@ fn main() {
     }
     println!("The total Goomblers balance is ${}.", initial_goomblers_total_balance);
     println!("The Goomble balance is ${}.", goomble_balance.lock().unwrap());
+    println!("Time elapsed in expensive_function() is: {:?}", duration);
 }
