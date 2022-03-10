@@ -31,9 +31,12 @@ public class GoombleSimulation {
         }
         final int numGoomblers = 12;
         final int numPresses = numGoomblers * MAX_BALANCE;
+        long startTime = System.nanoTime();
         GoombleSimulation simulation = new GoombleSimulation(numGoomblers);
         simulation.runSimulation(numPresses);
-        simulation.printResults();
+        long endTime = System.nanoTime();
+        long timeElapsed = endTime - startTime;
+        simulation.printResults(timeElapsed);
     }
 
     private void runSimulation(int numPresses) throws InterruptedException {
@@ -48,7 +51,7 @@ public class GoombleSimulation {
         threadPool.awaitTermination(60, TimeUnit.SECONDS);
     }
 
-    private void printResults() {
+    private void printResults(long timeElapsed) {
         System.out.println("Initial total Goomblers balance was $" + initialGoomblersTotalBalance);
         int totalBalance = 0;
         for (int i=0; i<goomblers.length; ++i) {
@@ -59,5 +62,6 @@ public class GoombleSimulation {
         System.out.println("The total Goomblers balance is $" + totalBalance);
         System.out.println("The Goomble balance is $" + goombleAccount.getBalance());
         System.out.println("The atomic Goomble balance is $" + goombleAccount.getAtomicBalance());
+        System.out.println("Elapsed time was " + (timeElapsed / 1000000.0) + "ms.");
     }
 }
