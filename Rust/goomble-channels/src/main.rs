@@ -75,7 +75,7 @@ fn main() {
 
     for goombler in goomblers {
         let (tx, rx) = channel_map.get(&goombler).unwrap();
-        thread_pool.execute(|| {
+        thread_pool.execute(move|| {
             for received in rx {
                 lucky(&goombler);
             }
@@ -87,12 +87,7 @@ fn main() {
         // let goomble_balance = Arc::clone(&goomble_balance);
         let goombler = goomblers.choose(&mut rand::thread_rng()).unwrap();
         let (tx, rx) = channel_map.get(goombler).unwrap();
-        let tx = tx.clone();
-        thread_pool.execute(move|| {
-            tx.send(String::from("push")).unwrap();
-            // lucky(goombler);
-            // lucky(goombler, goomble_balance);
-        });
+        tx.send(String::from("push")).unwrap();
     }
 
     // let tx1 = tx.clone();
