@@ -20,10 +20,7 @@ public class Goombler {
     }
 
     public void lucky() {
-        // We're not going to lock here, so back things will happen.
-        // if (GoombleSimulation.useLocks) {
-        //     lock.lock();
-        // }
+        lock.lock();
         if (balance > 0) {
             // Sleeping for a small, random amount of time here makes it more likely that
             // two or more threads will interleave here in interesting ways, thus creating
@@ -36,9 +33,7 @@ public class Goombler {
             --balance;
             goombleAccount.increment();
         }
-        // if (GoombleSimulation.useLocks) {
-        //     lock.unlock();
-        // }
+        lock.unlock();
     }
 
 }
