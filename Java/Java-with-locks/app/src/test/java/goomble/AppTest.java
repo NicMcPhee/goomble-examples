@@ -11,7 +11,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class AppTest {
     @Test void appHasAGreeting() {
-        GoombleSimulation classUnderTest = new GoombleSimulation();
-        assertNotNull(classUnderTest.getGreeting(), "app should have a greeting");
+        GoombleSimulation classUnderTest = new GoombleSimulation(0);
     }
 }

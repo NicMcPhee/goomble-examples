@@ -1,14 +1,12 @@
 package goomble;
 
 import java.util.Random;
-import java.util.concurrent.locks.ReentrantLock;
 
 public class Goombler {
 
     private int balance;
     private Random rand = new Random();
     private GoombleAccount goombleAccount;
-    private ReentrantLock lock = new ReentrantLock();
 
     public Goombler(GoombleAccount goombleAccount, int initialBalance) {
         this.goombleAccount = goombleAccount;
@@ -20,7 +18,7 @@ public class Goombler {
     }
 
     public void lucky() {
-        // We're not going to lock here, so back things will happen.
+        // We're not going to lock here, so bad things will happen.
         // if (GoombleSimulation.useLocks) {
         //     lock.lock();
         // }
