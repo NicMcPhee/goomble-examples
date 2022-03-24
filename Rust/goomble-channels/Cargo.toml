@@ -6,6 +6,9 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+crossbeam = "0.8"
+crossbeam-channel = "0.5.4"
+crossbeam-utils = "0.8"
 rand = "0.8.5"
 threadpool = "1.8.1"
 uuid = { version = "0.8.2", features = ["v4"] }
