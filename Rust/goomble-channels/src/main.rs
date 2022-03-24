@@ -6,13 +6,14 @@
  * https://docs.rs/crossbeam-channel/0.5.4/crossbeam_channel/
  */
 
-use std::sync::mpsc;
-use std::sync::mpsc::Sender;
-use std::sync::mpsc::Receiver;
+use crossbeam_channel::unbounded;
+use crossbeam_utils::thread;
+// use std::sync::mpsc;
+// use std::sync::mpsc::Sender;
+// use std::sync::mpsc::Receiver;
 // use std::sync::Arc;
 // use std::thread;
 // use std::time::Duration;
-use std::collections::HashMap;
 use std::hash::Hash;
 use std::hash::Hasher;
 use rand::Rng;
@@ -23,9 +24,8 @@ use uuid::Uuid;
 struct Goombler {
     id: Uuid,
     balance: u32, // Mutex<u32>
-    tx: Sender<String>,
-    rx: Receiver<String>
 }
+
 impl PartialEq for Goombler {
     fn eq(&self, other: &Self) -> bool {
         self.id == other.id
@@ -51,12 +51,9 @@ fn init_goomblers(num_goomblers: u32) -> (Vec<Goombler>, u32) {
     let mut goomblers: Vec<Goombler> = Vec::new();
     for _ in 0..num_goomblers {
         let initial_random_balance = rng.gen::<u32>() % MAX_BALANCE;
-        let (tx, rx) = mpsc::channel();
         let goombler = Goombler { 
             id: Uuid::new_v4(),
             balance: initial_random_balance,
-            tx,
-            rx
         }; //  Mutex::new(initial_random_balance) };
         initial_goomblers_total_balance += initial_random_balance;
         goomblers.push(goombler);
@@ -81,33 +78,42 @@ fn main() {
     let (goomblers, initial_goomblers_total_balance) = init_goomblers(NUM_GOOMBLERS);
 
     // let mut channel_map = HashMap::new();
-    // for goombler in goomblers {
-    //     let (tx, rx) = mpsc::channel();
-    //     channel_map.insert(goombler, (tx, rx));
+    // for goombler in goomblers.iter() {
+    //     let (s, r) = unbounded::<String>();
+    //     channel_map.insert(goombler, (s, r));
     // }
 
-    let thread_pool = ThreadPool::new(NUM_THREADS);
-
-    for goombler in &goomblers {
-        // let (tx, rx) = channel_map.get(&goombler).unwrap();
-        thread_pool.execute(move || {
-            for received in goombler.rx {
-                lucky(&goombler);
-            }
-        })
-    }
+    // Building on https://docs.rs/crossbeam/0.8.1/crossbeam/thread/index.html
+    let mut senders = Vec::new();
+    thread::scope(|sc| {
+        for goombler in &goomblers {
+            let (s, r) = unbounded::<String>();
+            senders.push(s);
+            sc.spawn(move |_| {
+                for _ in r {
+                    lucky(&goombler);
+                }
+            });
+        }
+    }).unwrap();
 
     for _ in 0..NUM_PRESSES {
         // let goomblers = Arc::clone(&arc_goomblers);
         // let goomble_balance = Arc::clone(&goomble_balance);
-        let goombler = goomblers.choose(&mut rand::thread_rng()).unwrap();
-        // let (tx, rx) = channel_map.get(goombler).unwrap();
-        // let tx = tx.clone();
-        thread_pool.execute(move|| {
-            // tx.send(String::from("push")).unwrap();
-            // lucky(goombler);
-            // lucky(goombler, goomble_balance);
-        });
+        // let goombler = goomblers.choose(&mut rand::thread_rng()).unwrap();
+        // let (s, r) = channel_map.get(goombler).unwrap();
+        let s = senders.choose(&mut rand::thread_rng()).unwrap();
+        s.send(String::from("push")).unwrap();
+        // let s = s.clone();
+        // thread_pool.execute(move|| {
+        //     tx.send(String::from("push")).unwrap();
+        //     // lucky(goombler);
+        //     // lucky(goombler, goomble_balance);
+        // });
+    }
+
+    for goombler in &goomblers {
+        println!("Goombler final balance = {}", goombler.balance);
     }
 
     // let tx1 = tx.clone();
