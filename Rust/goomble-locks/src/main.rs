@@ -29,11 +29,20 @@ fn init_goomblers(num_goomblers: u32) -> (Vec<Goombler>, u32) {
     return (goomblers, initial_goomblers_total_balance);
 }
 
+fn fib(n: u32) -> u64 {
+    if n < 2 {
+        n.into()
+    } else {
+        fib(n-1) + fib(n-2)
+    }
+}
+
 fn lucky(goombler: &Goombler, goomble_balance: Arc<Mutex<u64>>) {
     let mut rng = rand::thread_rng();
     let mut balance = goombler.balance.lock().unwrap();
     if *balance > 0 {
-        thread::sleep(Duration::from_millis(rng.gen::<u64>() % 60));
+        // thread::sleep(Duration::from_millis(rng.gen::<u64>() % 60));
+        fib(rng.gen::<u32>() % 30);
         *balance -= 1;
         // Frees up the lock on balance since we don't need that anymore.
         drop(balance);

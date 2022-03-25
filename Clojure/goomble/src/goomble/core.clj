@@ -13,13 +13,20 @@
    num-goomblers
    (fn [] (ref {:balance (rand-int max-balance)}))))
 
+(defn fib [n]
+  (if (< n 2)
+    n
+    (+ (fib (- n 1))
+       (fib (- n 2)))))
+
 (defn lucky
   [goomble-balance goombler]
   (dosync
    (let [balance (:balance @goombler)]
      (when (pos? balance)
        (alter goombler assoc :balance (dec balance))
-       (Thread/sleep (rand-int 60))
+      ;;  (Thread/sleep (rand-int 60))
+       (fib (rand-int 30))
        (alter goomble-balance inc)))))
 
 (defn run-simulation

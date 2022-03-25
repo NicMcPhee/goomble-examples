@@ -48,11 +48,20 @@ fn init_goomblers(num_goomblers: u32) -> (Vec<Goombler>, u32) {
     return (goomblers, initial_goomblers_total_balance);
 }
 
+fn fib(n: u32) -> u64 {
+    if n < 2 {
+        n.into()
+    } else {
+        fib(n-1) + fib(n-2)
+    }
+}
+
 fn lucky(goombler: &mut Goombler, goomble_send: &Sender<u32>) {
     let mut rng = rand::thread_rng();
     // println!("Pressing a button for {}.", goombler.id);
     if goombler.balance > 0 {
-        std::thread::sleep(Duration::from_millis(rng.gen::<u64>() % 60));
+        // std::thread::sleep(Duration::from_millis(rng.gen::<u64>() % 60));
+        fib(rng.gen::<u32>() % 30);
         goombler.balance -= 1;
         goomble_send.send(1).unwrap();
     }
