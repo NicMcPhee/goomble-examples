@@ -1,4 +1,5 @@
 use std::sync::{Arc, Mutex};
+use std::thread;
 use std::time::{Duration, Instant};
 use rand::Rng;
 use rand::seq::SliceRandom;
@@ -29,8 +30,10 @@ fn init_goomblers(num_goomblers: u32) -> (Vec<Goombler>, u32) {
 }
 
 fn lucky(goombler: &Goombler, goomble_balance: Arc<Mutex<u64>>) {
+    let mut rng = rand::thread_rng();
     let mut balance = goombler.balance.lock().unwrap();
     if *balance > 0 {
+        thread::sleep(Duration::from_millis(rng.gen::<u64>() % 60));
         *balance -= 1;
         // Frees up the lock on balance since we don't need that anymore.
         drop(balance);
