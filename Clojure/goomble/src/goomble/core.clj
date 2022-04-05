@@ -19,7 +19,7 @@
    (let [balance (:balance @goombler)]
      (when (pos? balance)
        (alter goombler assoc :balance (dec balance))
-       (Thread/sleep (rand-int 60))
+       (Thread/sleep (rand-int 3))
        (alter goomble-balance inc)))))
 
 (defn run-simulation

@@ -27,7 +27,7 @@ public class Goombler {
             // two or more threads will interleave here in interesting ways, thus creating
             // race conditions.
             try {
-                Thread.sleep(rand.nextInt(60));
+                Thread.sleep(rand.nextInt(3));
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
