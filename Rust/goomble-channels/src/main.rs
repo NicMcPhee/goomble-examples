@@ -52,7 +52,7 @@ fn lucky(goombler: &mut Goombler, goomble_send: &Sender<u32>) {
     let mut rng = rand::thread_rng();
     // println!("Pressing a button for {}.", goombler.id);
     if goombler.balance > 0 {
-        std::thread::sleep(Duration::from_millis(rng.gen::<u64>() % 60));
+        std::thread::sleep(Duration::from_millis(rng.gen::<u64>() % 3));
         goombler.balance -= 1;
         goomble_send.send(1).unwrap();
     }

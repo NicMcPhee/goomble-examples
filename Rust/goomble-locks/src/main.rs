@@ -33,7 +33,7 @@ fn lucky(goombler: &Goombler, goomble_balance: Arc<Mutex<u64>>) {
     let mut rng = rand::thread_rng();
     let mut balance = goombler.balance.lock().unwrap();
     if *balance > 0 {
-        thread::sleep(Duration::from_millis(rng.gen::<u64>() % 60));
+        thread::sleep(Duration::from_millis(rng.gen::<u64>() % 3));
         *balance -= 1;
         // Frees up the lock on balance since we don't need that anymore.
         drop(balance);
