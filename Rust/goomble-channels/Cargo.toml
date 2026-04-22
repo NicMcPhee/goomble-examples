@@ -9,6 +9,6 @@ edition = "2021"
 crossbeam = "0.8"
 crossbeam-channel = "0.5.4"
 crossbeam-utils = "0.8"
-rand = "0.8.5"
+rand = "0.8.6"
 threadpool = "1.8.1"
 uuid = { version = "0.8.2", features = ["v4"] }
